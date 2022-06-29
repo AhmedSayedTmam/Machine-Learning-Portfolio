@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js aws-lng-en_US" xmlns="http://www.w3.org/1999/xhtml" data-aws-assets="//a0.awsstatic.com" data-js-version="1.0.559" data-css-version="1.0.508" data-static-assets="//a0.awsstatic.com" prefix="og: http://ogp.me/ns#">
+ <head> 
+  <meta charset="UTF-8" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+  <title>Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda | AWS Machine Learning Blog</title> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> 
+  <link rel="dns-prefetch" href="//a0.awsstatic.com" /> 
+  <link rel="alternate" type="application/rss+xml" title="AWS Machine Learning Blog &raquo; Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda Comments Feed" href="https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/feed/" /> 
+  <link rel="canonical" href="https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" /> 
+  <meta property="og:locale" content="en_US" /> 
+  <meta property="og:site_name" content="Amazon Web Services" /> 
+  <meta property="og:title" content="Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda | Amazon Web Services" /> 
+  <meta property="og:type" content="article" /> 
+  <meta property="og:url" content="https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" /> 
+  <meta property="og:description" content="April 2021 – This post has been updated to ensure the solution walkthrough reflects the changes made to relevant AWS services and notebooks. At AWS Machine Learning (ML) workshops, customers often ask, “After I deploy an endpoint, where do I go from there?” You can deploy an Amazon SageMaker trained and validated ML model as […]" /> 
+  <meta property="og:image" content="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2018/07/18/sagemaker-endpoint-14.gif" /> 
+  <meta property="og:image:width" content="800" /> 
+  <meta property="og:image:height" content="619" /> 
+  <meta property="og:updated_time" content="2021-04-10T14:51:41-08:00" /> 
+  <meta property="article:publisher" content="https://www.facebook.com/amazonwebservices" /> 
+  <meta property="article:section" content="Amazon SageMaker" /> 
+  <meta property="article:tag" content="Amazon SageMaker" /> 
+  <meta property="article:tag" content="Artificial Intelligence" /> 
+  <meta property="article:tag" content="Amazon SageMaker" /> 
+  <meta property="article:published_time" content="2018-07-19T08:24:49-08:00" /> 
+  <meta property="article:modified_time" content="2021-04-10T14:51:41-08:00" /> 
+  <meta name="twitter:card" content="summary_large_image" /> 
+  <meta name="twitter:site" content="@awscloud" /> 
+  <meta name="twitter:domain" content="https://aws.amazon.com/blogs/" /> 
+  <meta name="twitter:title" content="Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda | Amazon Web Services" /> 
+  <meta name="twitter:description" content="April 2021 – This post has been updated to ensure the solution walkthrough reflects the changes made to relevant AWS services and notebooks. At AWS Machine Learning (ML) workshops, customers often ask, “After I deploy an endpoint, where do I go from there?” You can deploy an Amazon SageMaker trained and validated ML model as […]" /> 
+  <meta name="twitter:image" content="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2018/07/18/sagemaker-endpoint-14.gif" /> 
+  <link rel="icon" type="image/ico" href="//a0.awsstatic.com/main/images/site/fav/favicon.ico" /> 
+  <link rel="shortcut icon" type="image/ico" href="//a0.awsstatic.com/main/images/site/fav/favicon.ico" /> 
+  <link rel="apple-touch-icon" sizes="57x57" href="//a0.awsstatic.com/main/images/site/touch-icon-iphone-114-smile.png" /> 
+  <link rel="apple-touch-icon" sizes="72x72" href="//a0.awsstatic.com/main/images/site/touch-icon-ipad-144-smile.png" /> 
+  <link rel="apple-touch-icon" sizes="114x114" href="//a0.awsstatic.com/main/images/site/touch-icon-iphone-114-smile.png" /> 
+  <link rel="apple-touch-icon" sizes="144x144" href="//a0.awsstatic.com/main/images/site/touch-icon-ipad-144-smile.png" /> 
+  <link rel="home" type="application/rss+xml" title="RSS 2.0 Feed" href="https://aws.amazon.com/blogs/machine-learning/feed/" /> 
+  <meta name="robots" content="index, follow" /> 
+  <link rel="stylesheet" href="//a0.awsstatic.com/libra-css/css/1.0.373/style-awsm.css" /> 
+  <link rel="stylesheet" href="//a0.awsstatic.com/aws-blog/1.0.46/css/blog.css" /> 
+  <script>
+    var AWS = {
+      PageSettings: {
+        supportedLanguages: ["ar","de","en","es","fr","id","it","jp","ko","pt","ru","th","tr","vi","cn","tw"],
+        libraCSSPath: '//a0.awsstatic.com/libra-css/css/1.0.373',
+        currentLanguage: 'en-US',
+        blogPageTitle: "Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda"      }
+    };
+    var require = {
+      baseUrl: '//a0.awsstatic.com',
+      packages: [
+        { name: 'libra', location: 'libra/1.0.375' }
+      ],
+      paths: {
+        'aws-blog': '//a0.awsstatic.com/aws-blog/1.0.46/js',
+        'blog': '//a0.awsstatic.com/chrome/js/1.0.559/blog',
+        'directories': '//a0.awsstatic.com/libra/1.0.375/directories',
+        'jquery': 'jquery-amd',
+        'librastandardlib': '//a0.awsstatic.com/libra/1.0.375/librastandardlib',
+        "plugins": '//a0.awsstatic.com/chrome/js/1.0.559/plugins',
+        "scripts": '//a0.awsstatic.com/libra/1.0.375/v1-polyfills/scripts'
+      },
+      deps: [ 'scripts' ],
+      waitSeconds: 15
+    };
+  </script> 
+  <script src="//a0.awsstatic.com/aws-blog/1.0.46/js/blog-head.js"></script> 
+  <script src="//a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script> 
+  <script>
+    AWS.TargetMediator = {
+      supportedLanguages: AWS.PageSettings.supportedLanguages,
+      pageLanguage: 'en',
+      customParams: {"category0":"Amazon SageMaker","category1":"Artificial Intelligence"}    };
+  </script> 
+  <script src="//a0.awsstatic.com/target/1.0.112/aws-target-mediator.js"></script> 
+  <noscript> 
+   <style>.js-mbox { visibility: visible; }</style> 
+  </noscript> 
+ </head> 
+ <body class="awsm aws-blogs-page aws-blogs-page-type-single"> 
+  <header id="aws-page-header" class="awsm m-page-header" role="banner"> 
+   <div id="m-nav" class="m-nav" role="navigation"> 
+    <div class="m-nav-header lb-clearfix" data-menu-url="https://s0.awsstatic.com/en_US/nav/v3/panel-content/desktop/index.html"> 
+     <div class="m-nav-logo"> 
+      <div class="lb-bg-logo aws-amazon_web_services_smile-header-desktop-en"> 
+       <a href="https://aws.amazon.com/?nc2=h_lg"><span>Click here to return to Amazon Web Services homepage</span></a> 
+      </div> 
+     </div> 
+     <div class="m-nav-secondary-links" style="min-width: 620px"> 
+      <a href="https://aws.amazon.com/contact-us/?nc2=h_header">Contact Sales</a> 
+      <a class="lb-txt-none lb-tiny-iblock lb-txt-13 lb-txt lb-has-trigger-indicator" href="#" data-mbox-ignore="true" data-lb-popover-trigger="popover-support-selector"> Support&nbsp; <i class="icon-caret-down lb-trigger-mount"></i></a> 
+      <a id="m-nav-language-selector" class="lb-tiny-iblock lb-txt lb-has-trigger-indicator" href="#" data-lb-popover-trigger="popover-language-selector" data-language="en">English&nbsp;<i class="icon-caret-down lb-trigger-mount"></i></a> 
+      <a class="lb-tiny-iblock lb-txt lb-has-trigger-indicator" href="#" data-lb-popover-trigger="popover-my-account">My Account&nbsp;<i class="icon-caret-down lb-trigger-mount"></i></a> 
+      <div class="m-nav-cta-btn"> 
+       <div class="lb-mbox js-mbox" data-lb-comp="mbox" data-lb-comp-ignore="true" data-mbox="en_header_nav_cta"> 
+        <div class="lb-btn"> 
+         <a id="aws-nav-cta-button" class="lb-btn-p-primary" href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?nc2=h_ct&amp;src=default" style="min-width:171px;"><span>Create an AWS Account</span></a> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="m-nav-primary-group"> 
+      <div class="m-nav-primary-links"> 
+       <i class="m-nav-angle-left-icon" aria-hidden="true"></i> 
+       <ul> 
+        <li><a href="https://aws.amazon.com/products/?nc2=h_ql_prod" data-panel="m-nav-panel-products">Products</a></li> 
+        <li><a href="https://aws.amazon.com/solutions/?nc2=h_ql_sol" data-panel="m-nav-panel-solutions">Solutions</a></li> 
+        <li><a href="https://aws.amazon.com/pricing/?nc2=h_ql_pr" data-panel="m-nav-panel-pricing">Pricing</a></li> 
+        <li><a href="https://docs.aws.amazon.com/index.html?nc2=h_ql_doc" data-panel="m-nav-panel-documentation">Documentation</a></li> 
+        <li><a href="https://aws.amazon.com/getting-started/?nc2=h_ql_le" data-panel="m-nav-panel-learn">Learn</a></li> 
+        <li><a href="https://aws.amazon.com/partners/?nc2=h_ql_pn" data-panel="m-nav-panel-partner">Partner Network</a></li> 
+        <li><a href="https://aws.amazon.com/marketplace/?nc2=h_ql_mp" data-panel="m-nav-panel-marketplace">AWS Marketplace</a></li> 
+        <li><a href="https://aws.amazon.com/customer-enablement/?nc2=h_ql_ce" data-panel="m-nav-panel-customer">Customer Enablement</a></li> 
+        <li><a href="https://aws.amazon.com/events/?nc2=h_ql_ev" data-panel="m-nav-panel-events">Events</a></li> 
+        <li><a href="https://aws.amazon.com/contact-us/?nc2=h_ql_exm" data-panel="m-nav-panel-more">Explore More </a></li> 
+       </ul> 
+       <div class="m-nav-icon-group"> 
+        <i class="m-nav-angle-right-icon" aria-hidden="true"></i> 
+        <i class="m-nav-search-icon"></i> 
+       </div> 
+      </div> 
+      <div class="m-nav-search"> 
+       <form action="https://aws.amazon.com/search/" role="search"> 
+        <div class="m-typeahead" data-directory-id="typeahead-suggestions" data-lb-comp="typeahead"> 
+         <input class="m-nav-search-field" placeholder="Search" autocomplete="off" spellcheck="false" dir="auto" type="text" name="searchQuery" /> 
+        </div> 
+       </form> 
+       <i class="m-nav-close-icon"></i> 
+      </div> 
+     </div> 
+    </div> 
+    <div class="lb-popover lb-popover-aui lb-popover-tiny" data-lb-comp="popover" data-id="popover-language-selector" data-action="hover" data-position="top"> 
+     <div class="lb-grid lb-row lb-row-max-large lb-snap"> 
+      <div class="lb-col lb-tiny-24 lb-mid-12"> 
+       <ul class="lb-txt-none lb-ul lb-list-style-none lb-tiny-ul-block"> 
+        <li data-language="ar"><a href="https://aws.amazon.com/ar/?nc1=h_ls">عربي</a></li> 
+        <li data-language="id"><a href="https://aws.amazon.com/id/?nc1=h_ls">Bahasa Indonesia</a></li> 
+        <li data-language="de"><a href="https://aws.amazon.com/de/?nc1=h_ls">Deutsch</a></li> 
+        <li data-language="en"><a href="https://aws.amazon.com/?nc1=h_ls">English</a></li> 
+        <li data-language="es"><a href="https://aws.amazon.com/es/?nc1=h_ls">Espa&ntilde;ol</a></li> 
+        <li data-language="fr"><a href="https://aws.amazon.com/fr/?nc1=h_ls">Fran&ccedil;ais</a></li> 
+        <li data-language="it"><a href="https://aws.amazon.com/it/?nc1=h_ls">Italiano</a></li> 
+        <li data-language="pt"><a href="https://aws.amazon.com/pt/?nc1=h_ls">Portugu&ecirc;s</a></li> 
+       </ul> 
+      </div> 
+      <div class="lb-col lb-tiny-24 lb-mid-12"> 
+       <ul class="lb-txt-none lb-ul lb-list-style-none lb-tiny-ul-block"> 
+        <li data-language="vi"><a href="https://aws.amazon.com/vi/?nc1=f_ls">Tiếng Việt</a></li> 
+        <li data-language="tr"><a href="https://aws.amazon.com/tr/?nc1=h_ls">T&uuml;rk&ccedil;e</a></li> 
+        <li data-language="ru"><a href="https://aws.amazon.com/ru/?nc1=h_ls">Ρусский</a></li> 
+        <li data-language="th"><a href="https://aws.amazon.com/th/?nc1=f_ls">ไทย</a></li> 
+        <li data-language="jp"><a href="https://aws.amazon.com/jp/?nc1=h_ls">日本語</a></li> 
+        <li data-language="ko"><a href="https://aws.amazon.com/ko/?nc1=h_ls">한국어</a></li> 
+        <li data-language="cn"><a href="https://aws.amazon.com/cn/?nc1=h_ls">中文 (简体)</a></li> 
+        <li data-language="tw"><a href="https://aws.amazon.com/tw/?nc1=h_ls">中文 (繁體)</a></li> 
+       </ul> 
+      </div> 
+     </div> 
+    </div> 
+    <div class="lb-popover lb-popover-aui lb-popover-tiny" data-lb-comp="popover" data-id="popover-my-account" data-action="hover" data-position="top"> 
+     <ul class="lb-txt-none lb-ul lb-list-style-none lb-tiny-ul-block"> 
+      <li><a href="https://console.aws.amazon.com/?nc2=h_m_mc">AWS Management Console</a></li> 
+      <li><a href="https://portal.aws.amazon.com/gp/aws/manageYourAccount?nc2=h_m_ma">Account Settings</a></li> 
+      <li><a href="https://console.aws.amazon.com/billing/home?nc2=h_m_bc">Billing &amp; Cost Management</a></li> 
+      <li><a href="https://console.aws.amazon.com/iam/home?nc2=h_m_sc#security_credential">Security Credentials</a></li> 
+      <li><a href="https://phd.aws.amazon.com/?nc2=h_m_sc">AWS Personal Health Dashboard</a></li> 
+     </ul> 
+    </div> 
+    <div class="lb-popover lb-popover-aui lb-popover-tiny" data-lb-comp="popover" data-id="popover-support-selector" data-action="hover" data-position="top"> 
+     <ul class="lb-txt-none lb-ul lb-list-style-none lb-tiny-ul-block"> 
+      <li><a href="https://console.aws.amazon.com/support/home/?nc2=h_ql_cu">Support Center</a></li> 
+      <li><a href="https://aws.amazon.com/premiumsupport/knowledge-center/?nc2=h_m_ma">Knowledge Center</a></li> 
+      <li><a href="https://aws.amazon.com/premiumsupport/?nc2=h_m_bc">AWS Support Overview</a></li> 
+     </ul> 
+    </div> 
+    <script class="tt-suggestion-tpl" type="text/x-handlebars-template">
+    <div>
+      <a href="{{primaryUrl}}">
+        <div class="tt-title">
+          {{cleanHTMLEntity title}}
+        </div>
+        {{#if desc}}
+          <div class="tt-desc">
+            {{cleanHTMLEntity desc}}
+          </div>
+        {{/if}}
+      </a>
+      <div class="tt-btn-group">
+        {{#if pricingUrl}}
+          <a href="{{pricingUrl}}">
+            <div class="tt-btn">Pricing</div>
+          </a>
+        {{/if}}
+        {{#if docsUrl}}
+          <a href="{{docsUrl}}">
+            <div class="tt-btn">Documentation</div>
+          </a>
+        {{/if}}
+        {{#if calculatorUrl}}
+          <a href="{{calculatorUrl}}">
+            <div class="tt-btn">Calculator</div>
+          </a>
+        {{/if}}
+      </div>
+    </div>
+  </script> 
+    <script class="tt-products-head-tpl" type="text/x-handlebars-template">
+    <div class="tt-header lb-txt-bold">
+      <p>Products</p>
+    </div>
+  </script> 
+    <script class="tt-keypages-head-tpl" type="text/x-handlebars-template">
+    <div class="tt-header lb-txt-bold">
+      <p>Related Pages</p>
+    </div>
+  </script> 
+    <script class="tt-tutorials-head-tpl" type="text/x-handlebars-template">
+    <div class="tt-header lb-txt-bold">
+      <p>Tutorials</p>
+    </div>
+  </script> 
+    <script class="tt-blogs-head-tpl" type="text/x-handlebars-template">
+    <div class="tt-header lb-txt-bold">
+      <p>Blogs</p>
+    </div>
+  </script> 
+    <script class="tt-see-all-tpl" type="text/x-handlebars-template">
+    <div class="tt-see-all">
+      <a href="https://aws.amazon.com/search/?searchQuery={{ query }}">See more results for "{{ query }}"&lrm;</a>
+    </div>
+  </script> 
+   </div> 
+   <div id="m-nav-mobile" class="m-nav-mobile"> 
+    <div id="m-nav-mobile-header" class="m-nav-mobile-header" data-menu-url="https://s0.awsstatic.com/en_US/nav/v3/panel-content/mobile/index.html"> 
+     <div class="lb-bg-logo aws-amazon_web_services_smile-header-mobile-en"> 
+      <a href="https://aws.amazon.com/?nc2=h_lg"><span>Click here to return to Amazon Web Services homepage</span></a> 
+     </div> 
+     <div class="m-nav-mobile-button-group"> 
+      <i class="m-nav-mobile-button icon-search"></i> 
+      <i class="m-nav-mobile-button icon-reorder"></i> 
+     </div> 
+    </div> 
+    <div id="m-nav-mobile-search" class="m-nav-mobile-search"> 
+     <form action="https://aws.amazon.com/search" role="search"> 
+      <div class="m-typeahead"> 
+       <input class="m-nav-search-field" placeholder="Search" autocomplete="off" spellcheck="false" dir="auto" type="text" name="searchQuery" /> 
+      </div> 
+     </form> 
+    </div> 
+    <nav id="m-nav-trimdown" role="navigation"> 
+     <ul class="m-nav-mobile-menu-group"> 
+      <li> <a href="https://aws.amazon.com/products/?nc2=h_mo">Products</a> </li> 
+      <li> <a href="https://aws.amazon.com/solutions/?nc2=h_mo">Solutions</a> </li> 
+      <li> <a href="https://aws.amazon.com/pricing/?nc2=h_mo">Pricing</a> </li> 
+      <li> <a href="https://aws.amazon.com/what-is-aws/?nc2=h_mo">Introduction to AWS</a> </li> 
+      <li> <a href="https://aws.amazon.com/getting-started/?nc2=h_mo">Getting Started</a> </li> 
+      <li> <a href="https://aws.amazon.com/documentation/?nc2=h_mo">Documentation</a> </li> 
+      <li> <a href="https://aws.amazon.com/training/?nc2=h_mo">Training and Certification</a> </li> 
+      <li> <a href="https://aws.amazon.com/developer/?nc2=h_mo">Developer Center</a> </li> 
+      <li> <a href="https://aws.amazon.com/solutions/case-studies/?nc2=h_mo">Customer Success</a> </li> 
+      <li> <a href="https://aws.amazon.com/partners/?nc2=h_mo">Partner Network</a> </li> 
+      <li> <a href="https://aws.amazon.com/marketplace/?nc2=h_mo">AWS Marketplace</a> </li> 
+      <li> <a href="https://console.aws.amazon.com/support/home?nc2=h_ql_cu">Support</a> </li> 
+      <li> <a href="https://console.aws.amazon.com/console/home">Log into Console</a> </li> 
+      <li> <a href="https://aws.amazon.com/console/mobile/">Download the Mobile App</a> </li> 
+     </ul> 
+    </nav> 
+   </div> 
+  </header> 
+  <div class="awsm"> 
+   <div class="lb-blog-nav" data-lb-comp="aws-blog:blog-nav"> 
+    <div class="lb-row lb-row-max-xlarge lb-snap"> 
+     <div class="lb-blog-nav-content"> 
+      <div class="lb-blog-nav-links"> 
+       <a class="lb-txt-none lb-txt" href="/blogs"> Blog Home</a> 
+       <a class="lb-txt-none lb-txt lb-has-trigger-indicator" href="/blogs" data-lb-popover-trigger="blog-category" data-trk-params="{&quot;trkOverrideWithQs&quot;:true}"> Category&nbsp; <i class="icon-caret-down lb-trigger-mount"></i></a> 
+       <a class="lb-txt-none lb-txt lb-has-trigger-indicator" href="/blogs" data-lb-popover-trigger="blog-editions"> Edition&nbsp; <i class="icon-caret-down lb-trigger-mount"></i></a> 
+       <a class="lb-txt-none lb-txt lb-has-trigger-indicator" href="/blogs" data-lb-popover-trigger="blog-follow"> Follow&nbsp; <i class="icon-caret-down lb-trigger-mount"></i></a> 
+      </div> 
+      <div class="lb-blog-nav-search"> 
+       <form action="https://aws.amazon.com/search" role="search"> 
+        <input type="hidden" name="facet_type" value="blogs" /> 
+        <input type="hidden" name="sortResults" value="modification_date desc" /> 
+        <div class="lb-search-input"> 
+         <input name="q" type="text" placeholder="Search Blogs" /> 
+         <div class="lb-blog-search-button"> 
+          <button class="icon-search" type="submit"></button> 
+         </div> 
+        </div> 
+       </form> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="lb-popover lb-popover-aui lb-popover-xlarge" data-lb-comp="popover" data-id="blog-category" data-action="hover" data-position="top"> 
+    <div class="lb-grid lb-row lb-row-max-large lb-snap"> 
+     <div class="lb-col lb-tiny-24 lb-mid-12"> 
+      <div class="lb-none-pad lb-none-v-margin lb-box"> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/architecture/"> Architecture</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/aws-cost-management/"> AWS Cost Management</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/apn/"> AWS Partner Network</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/podcasts/aws-podcast/?sc_ichannel=ha&amp;sc_icampaign=acq_awsblognav&amp;sc_icontent=categorynav"> AWS Podcast</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/awsmarketplace/"> AWS Marketplace</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/aws/"> AWS News</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/big-data/"> Big Data</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/business-productivity/"> Business Productivity</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/compute/"> Compute</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/contact-center/"> Contact Center</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/containers/"> Containers</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/database/"> Database</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/desktop-and-application-streaming/"> Desktop &amp; Application Streaming</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/developer/"> Developer</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/devops/"> DevOps</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/enterprise-strategy/"> Enterprise Strategy</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/mobile/"> Front-End Web &amp; Mobile</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/gametech/"> Game Tech</a> 
+      </div> 
+     </div> 
+     <div class="lb-col lb-tiny-24 lb-mid-12"> 
+      <div class="lb-none-pad lb-none-v-margin lb-box"> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/hpc/"> HPC</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/infrastructure-and-automation/"> Infrastructure &amp; Automation</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/industries/"> Industries</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/iot/"> Internet of Things</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/machine-learning/"> Machine Learning</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/mt/"> Management &amp; Governance</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/media/"> Media</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/messaging-and-targeting/"> Messaging &amp; Targeting</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/modernizing-with-aws/"> Modernizing with AWS</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/networking-and-content-delivery/"> Networking &amp; Content Delivery</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/opensource/"> Open Source</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/publicsector/"> Public Sector</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/quantum-computing/" data-trk-params="{&quot;trkOverrideWithQs&quot;:true}"> Quantum Computing</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/robotics/"> Robotics</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/awsforsap/"> SAP</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/security/"> Security, Identity, &amp; Compliance</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/startups/"> Startups</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/storage/"> Storage</a> 
+       <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/training-and-certification/"> Training &amp; Certification</a> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="lb-popover lb-popover-aui lb-popover-tiny" data-lb-comp="popover" data-id="blog-editions" data-action="hover" data-position="top"> 
+    <div class="lb-none-pad lb-box"> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/cn/blogs/china/"> 中国版</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/fr/blogs/france/"> &Eacute;dition Fran&ccedil;aise</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/de/blogs/germany/"> Deutsche Edition</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/jp/blogs/news/"> 日本版</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/ko/blogs/korea/"> 한국 에디션</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/pt/blogs/aws-brasil/" data-trk-params="{&quot;trkOverrideWithQs&quot;:true}"> Edi&ccedil;&atilde;o em Portugu&ecirc;s</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/es/blogs/aws-spanish/" data-trk-params="{&quot;trkOverrideWithQs&quot;:true}"> Edici&oacute;n en Espa&ntilde;ol</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs/"> English Edition</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/ru/blogs/rus/"> Версия на русском</a> 
+     <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/id/blogs/indonesia/"> Edisi Bahasa Indonesia</a> 
+    </div> 
+   </div> 
+   <div class="lb-popover lb-popover-aui lb-popover-tiny" data-lb-comp="popover" data-id="blog-follow" data-action="hover" data-position="top"> 
+    <div class="lb-none-pad lb-box"> 
+     <a class="lb-txt-none lb-txt" href="https://pages.awscloud.com/communication-preferences?sc_ichannel=ha&amp;sc_icampaign=multi_emailoptin&amp;sc_isegment=en&amp;sc_iplace=fl-nav&amp;sc_icontent=subscribe_for_updates&amp;trkCampaign=EmailOptin&amp;trk=blog"> Mailing List</a> 
+     <a class="lb-txt-none lb-txt" href="http://feeds.feedburner.com/AmazonWebServicesBlog"> RSS Feed</a> 
+    </div> 
+   </div> 
+  </div> 
+  <div id="aws-page-content" class="aws-blog-has-related-posts lb-page-content lb-page-with-sticky-subnav blog-page" data-page-alert-target="true"> 
+   <div class="aws-blog-related-posts" data-lb-comp="aws-blog:related-items" data-directory-id="blog-posts" data-related-tags="[&quot;blog-posts#category-artificial-intelligence#sagemaker&quot;,&quot;blog-posts#category#artificial-intelligence&quot;]" data-current-item="blog-posts#34-5500" data-order-by="SortOrderValue" data-number-of-items="8"> 
+    <div class="aws-directories-container"></div> 
+    <script type="text/x-handlebars-template">
+    <h4>Related Posts</h4>
+    <aside>
+      <nav>
+        <ul>
+          {{#each items}}
+            <li><a href="{{track_url additionalFields.link 'b_rp'}}">{{{additionalFields.title}}}</a></li>
+          {{/each}}
+        </ul>
+      </nav>
+    </aside>
+  </script> 
+   </div> 
+   <div class="aws-blog-content lb-row lb-row-max-large lb-snap lb-gutter-mid"> 
+    <main class="lb-col lb-tiny-24 lb-mid-16" role="main"> 
+     <h2 class="lb-h5 blog-title"><a href="https://aws.amazon.com/blogs/machine-learning/">AWS Machine Learning Blog</a></h2> 
+     <article class="blog-post" vocab="http://schema.org/" typeof="TechArticle"> 
+      <meta property="inLanguage" content="en-US" /> 
+      <meta property="image" content="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2018/07/18/sagemaker-endpoint-14.gif" /> 
+      <h1 class="lb-h2 blog-post-title" property="name headline">Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda</h1> 
+      <footer class="blog-post-meta" data-lb-comp="aws-blog:share-dialog">
+        by 
+       <span property="author" typeof="Person"><span property="name">Rumi Olsen</span></span> | on 
+       <time property="datePublished" datetime="2018-07-19T08:24:49-08:00">19 JUL 2018</time> | in 
+       <span class="blog-post-categories"><a href="https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/sagemaker/" title="View all posts in Amazon SageMaker"><span property="articleSection">Amazon SageMaker</span></a>, <a href="https://aws.amazon.com/blogs/machine-learning/category/artificial-intelligence/" title="View all posts in Artificial Intelligence"><span property="articleSection">Artificial Intelligence</span></a></span> | 
+       <a href="https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" property="url">Permalink</a> | 
+       <a id="aws-comment-trigger-5500" href="https://commenting.awsblogs.com/embed.html?disqus_shortname=amazon-ai-blog&amp;disqus_identifier=5500&amp;disqus_title=Call+an+Amazon+SageMaker+model+endpoint+using+Amazon+API+Gateway+and+AWS+Lambda&amp;disqus_url=https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" data-lb-comp="aws-blog:commenting" data-sandbox-attr="allow-forms allow-scripts allow-popups allow-same-origin" property="discussionUrl"><i class="icon-comment"></i> Comments</a> | 
+       <a href="#" role="button" data-share-dialog-toggle=""><span class="span icon-share"></span>&nbsp;Share</a> 
+       <div class="blog-share-dialog" data-share-dialog="" style="display: none;"> 
+        <ul> 
+         <li> <a class="lb-txt" href="https://www.facebook.com/sharer/sharer.php?u=https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" target="_blank"><span class="icon-facebook-square" aria-label="Share on Facebook"></span></a> </li> 
+         <li> <a class="lb-txt" href="https://twitter.com/intent/tweet/?text=Call%20an%20Amazon%20SageMaker%20model%20endpoint%20using%20Amazon%20API%20Gateway%20and%20AWS%20Lambda&amp;via=awscloud&amp;url=https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" target="_blank"><span class="icon-twitter-square" aria-label="Share on Twitter"></span></a> </li> 
+         <li> <a class="lb-txt" href="https://www.linkedin.com/shareArticle?mini=true&amp;title=Call%20an%20Amazon%20SageMaker%20model%20endpoint%20using%20Amazon%20API%20Gateway%20and%20AWS%20Lambda&amp;source=Amazon%20Web%20Services&amp;summary=April%202021%20%26%238211%3B%20This%20post%20has%20been%20updated%20to%20ensure%20the%20solution%20walkthrough%20reflects%20the%20changes%20made%20to%20relevant%20AWS%20services%20and%20notebooks.%20At%20AWS%20Machine%20Learning%20%28ML%29%20workshops%2C%20customers%20often%20ask%2C%20%E2%80%9CAfter%20I%20deploy%20an%20endpoint%2C%20where%20do%20I%20go%20from%20there%3F%E2%80%9D%20You%20can%20deploy%20an%20Amazon%20SageMaker%20trained%20and%20validated%20ML%20model%20as%20%5B%26hellip%3B%5D&amp;url=https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" target="_blank"><span class="icon-linkedin-square" aria-label="Share on LinkedIn"></span></a> </li> 
+         <li> <a class="lb-txt" href="mailto:?subject=Call%20an%20Amazon%20SageMaker%20model%20endpoint%20using%20Amazon%20API%20Gateway%20and%20AWS%20Lambda&amp;body=Call%20an%20Amazon%20SageMaker%20model%20endpoint%20using%20Amazon%20API%20Gateway%20and%20AWS%20Lambda%0A%0Ahttps://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" target="_blank"><span class="icon-envelope-square" aria-label="Share on Email"></span></a> </li> 
+         <li class="blog-share-dialog-url"><input type="text" value="https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" title="Link to Call an Amazon SageMaker model endpoint using Amazon API Gateway and AWS Lambda" readonly="" data-share-dialog-url="" /></li> 
+        </ul> 
+       </div> 
+      </footer> 
+      <section class="blog-post-content" property="articleBody"> 
+       <p><em>April 2021 – This post has been updated to ensure the solution walkthrough reflects the changes made to relevant AWS services and notebooks.</em></p> 
+       <p>At AWS Machine Learning (ML) workshops, customers often ask, “After I deploy an endpoint, where do I go from there?” You can deploy an <a href="https://aws.amazon.com/sagemaker/" target="_blank" rel="noopener noreferrer">Amazon SageMaker</a> trained and validated ML model as an endpoint in production. Alternatively, you can choose which SageMaker functionality to use. For example, you can choose just to train a model or to host one. Whether you choose one SageMaker functionality or use them all, you invoke the model as an endpoint deployed somewhere.</p> 
+       <p>The following diagram shows how the deployed model is called using serverless architecture. Starting from the client side, a client script calls an <a href="https://aws.amazon.com/api-gateway" target="_blank" rel="noopener noreferrer">Amazon API Gateway</a> API action and passes parameter values. API Gateway is a layer that provides the API to the client. In addition, it seals the backend so that <a href="http://aws.amazon.com/lambda" target="_blank" rel="noopener noreferrer">AWS Lambda</a> stays and runs in a protected private network. API Gateway passes the parameter values to the Lambda function. The Lambda function parses the value and sends it to the SageMaker model endpoint. The model performs the prediction and returns the predicted value to Lambda. The Lambda function parses the returned value and sends it back to API Gateway. API Gateway responds to the client with that value.</p> 
+       <p><img class="alignnone size-full wp-image-23165" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/1-diagram.jpg" alt="" width="800" height="153" /></p> 
+       <p>In this post, I show you how to invoke a model endpoint deployed by SageMaker using API Gateway and Lambda. For testing purposes, we use Postman.</p> 
+       <h2>Breast cancer model notebook</h2> 
+       <p>We use a sample notebook provided by SageMaker called Breast Cancer Prediction.ipynb. You have access to this notebook on the <strong>SageMaker Examples</strong> tab.</p> 
+       <p><img class="alignnone size-full wp-image-23166" style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/2-Jupyter.jpg" alt="" width="800" height="586" /></p> 
+       <p>Choosing <strong>Use</strong> creates a folder and loads the notebook. The breast cancer prediction model predicts whether a breast mass is a malignant tumor or benign by looking at features computed from a digitized image of a fine needle aspirate of a breast mass. The data used to train the model consists of the diagnosis as well as the 10 real-valued features that are computed for each cell nucleus (radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension). The prediction returned by the model is either 0 or 1; 0 being benign and 1 being malignant tumor. The Lambda function converts this value to be either B for benign or M for malignant tumor.</p> 
+       <p>SageMaker has managed built-in Jupyter notebooks that allow you to write code in Python or R to explore, analyze, and do some modeling with small set of data. The sample Jupyter notebooks get loaded onto a notebook instance when the notebook instance boots up. Each sample notebook consists of markdown-based comments that explain each step, from downloading training data, performing the training, to deploying a model endpoint. After the model is trained and deployed, you can invoke the model endpoint using the SageMaker runtime API. To make it free from server and infrastructure management, we encapsulate this invocation using API Gateway and Lambda.</p> 
+       <h2>Create a SageMaker model endpoint</h2> 
+       <p>To create your model endpoint, complete the following steps:</p> 
+       <ol> 
+        <li>Open the <code>Breast Cancer Prediction.ipynb</code> sample notebook.</li> 
+        <li>Comment out the last cell by inserting #, because it deletes the endpoint created in the previous cell.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/3-run-the-cell-below.jpg" alt="" width="800" height="94" /></p> 
+       <ol start="3"> 
+        <li>Run the entire notebook by choosing <strong>Run All</strong> on the <strong>Cell</strong></li> 
+       </ol> 
+       <p>Alternatively, you can run each cell one by one by pressing <strong>Shift + Enter</strong>. If you run each cell, you can learn what each step is doing. For the purpose of this post, I chose <strong>Run All</strong> to deploy the model as an endpoint after the model training is complete.</p> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/4-breast-cancer-prediction.jpg" alt="" width="800" height="703" /></p> 
+       <p>Upon creation, you can view this endpoint on the SageMaker console. The default endpoint name looks like <code>linear-endpoint-201803211721</code>, but you can make it more meaningful. I called mine <code>linear-learner-breast-cancer-prediction-endpoint</code>.</p> 
+       <h2>Create a Lambda function that calls the SageMaker runtime invoke_endpoint</h2> 
+       <p>Now we have a SageMaker model endpoint. Let’s look at how we call it from Lambda. We use the SageMaker runtime API action and the Boto3 <a href="http://boto3.readthedocs.io/en/latest/reference/services/sagemaker-runtime.html" target="_blank" rel="noopener noreferrer">sagemaker-runtime.invoke_endpoint()</a>.</p> 
+       <ol> 
+        <li>On the Lambda console, on the <strong>Functions</strong> page, choose <strong>Create function</strong>.</li> 
+        <li>For <strong>Function name</strong>, enter a name.</li> 
+        <li>For <strong>Runtime</strong>&cedil; choose your runtime.</li> 
+        <li>For <strong>Execution role</strong>&cedil; select <strong>Use an existing role</strong>.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/5-create-function.jpg" alt="" width="800" height="667" /></p> 
+       <ol start="5"> 
+        <li>Choose an <a href="http://aws.amazon.com/iam" target="_blank" rel="noopener noreferrer">AWS Identity and Access Management</a> (IAM) role that includes the following policy, which gives your function permission to invoke a model endpoint:</li> 
+       </ol> 
+       <div class="hide-language"> 
+        <pre class="unlimited-height-code"><code class="lang-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;VisualEditor0&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: &quot;sagemaker:InvokeEndpoint&quot;,
+            &quot;Resource&quot;: &quot;*&quot;
+        }
+    ]
+}
+</code></pre> 
+       </div> 
+       <p>The following is the sample Lambda function code:</p> 
+       <div class="hide-language"> 
+        <pre class="unlimited-height-code"><code class="lang-python">import os
+import io
+import boto3
+import json
+import csv
+
+# grab environment variables
+ENDPOINT_NAME = os.environ['ENDPOINT_NAME']
+runtime= boto3.client('runtime.sagemaker')
+
+def lambda_handler(event, context):
+    print(&quot;Received event: &quot; + json.dumps(event, indent=2))
+    
+    data = json.loads(json.dumps(event))
+    payload = data['data']
+    print(payload)
+    
+    response = runtime.invoke_endpoint(EndpointName=ENDPOINT_NAME,
+                                       ContentType='text/csv',
+                                       Body=payload)
+    print(response)
+    result = json.loads(response['Body'].read().decode())
+    print(result)
+    pred = int(result['predictions'][0]['score'])
+    predicted_label = 'M' if pred == 1 else 'B'
+    
+    return predicted_label
+</code></pre> 
+       </div> 
+       <p><code>ENDPOINT_NAME</code> is an environment variable that holds the name of the SageMaker model endpoint you just deployed using the sample notebook. Replace the value <code>linear-learner-breast-cancer-prediction-endpoint</code> with the endpoint name you created, if it’s different.</p> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/6-environment-variables.jpg" alt="" width="800" height="206" /></p> 
+       <p>The event that invokes the Lambda function is triggered by API Gateway. API Gateway simply passes the test data through an event.</p> 
+       <h2>Create a REST API: Integration request setup</h2> 
+       <p>You can create an API by following these steps:</p> 
+       <ol> 
+        <li>On the API Gateway console, choose the <strong>REST API</strong></li> 
+        <li>Choose <strong>Build</strong>.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/7-Rest-API.jpg" alt="" width="575" height="340" /></p> 
+       <ol start="3"> 
+        <li>Select <strong>New API</strong>.</li> 
+        <li>For <strong>API name</strong>&cedil; enter a name (for example, <code>BreastCancerPredition</code>).</li> 
+        <li>Leave <strong>Endpoint Type</strong> as <strong>Regional</strong>.</li> 
+        <li>Choose <strong>Create API</strong>.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/8-Create-new-API.jpg" alt="" width="800" height="395" /></p> 
+       <ol start="7"> 
+        <li>On the <strong>Actions</strong> menu, choose <strong>Create resource</strong>.</li> 
+        <li>Enter a name for the resource (for example, <code>predictbreastcancer</code>).</li> 
+        <li>After the resource is created, on the <strong>Actions</strong> menu, choose <strong>Create Method</strong> to create a POST method.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/9-Actions-Methods.jpg" alt="" width="800" height="321" /></p> 
+       <ol start="10"> 
+        <li>For <strong>Integration type</strong>, select <strong>Lambda Function</strong>.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/10-Actions-Method-execution.jpg" alt="" width="800" height="556" /></p> 
+       <ol start="11"> 
+        <li>For <strong>Lambda function</strong>, enter the function you created.</li> 
+       </ol> 
+       <p>When the setup is complete, you can deploy the API to a stage.</p> 
+       <ol start="12"> 
+        <li>On the <strong>Actions</strong> menu, choose <strong>Deploy API</strong>.</li> 
+        <li>Create a new stage called test.</li> 
+        <li>Choose <strong>Deploy</strong>.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/11-Deploy-API.jpg" alt="" width="575" height="302" /></p> 
+       <p>This step gives you the invoke URL.</p> 
+       <p>For more information on creating an API with API Gateway, see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-create-api.html" target="_blank" rel="noopener noreferrer">Creating a REST API in Amazon API Gateway</a>. In addition, you can make the API more secure <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-to-api.html" target="_blank" rel="noopener noreferrer">using various methods</a>.</p> 
+       <p>Now that you have an API and a Lambda function in place, let’s look at the test data.</p> 
+       <h2>Test data</h2> 
+       <p>When the sample notebook loads the dataset to the <a href="http://aws.amazon.com/s3" target="_blank" rel="noopener noreferrer">Amazon Simple Storage Service</a> (Amazon S3) bucket that you specified, CSV files with data are loaded. The sample notebook separates the dataset into two files: training data and validation data. Each file is saved in its respective folder. The Amazon S3 path to the file looks like <code><em><span style="color: #ff0000">&lt;your bucket name&gt;</span></em>/sagemaker/DEMO-breast-cancer-prediction/validation</code>.</p> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/12-Overview.jpg" alt="" width="800" height="354" /></p> 
+       <p>The following code is one row of the validation data from the file <code>linear_validation.data</code> in the <code>validation</code> folder:</p> 
+       <div class="hide-language"> 
+        <pre class="unlimited-height-code"><code class="lang-json">{“data”:”13.49,22.3,86.91,561.0,0.08752,0.07697999999999999,0.047510000000000004,0.033839999999999995,0.1809,0.057179999999999995,0.2338,1.3530000000000002,1.735,20.2,0.004455,0.013819999999999999,0.02095,0.01184,0.01641,0.001956,15.15,31.82,99.0,698.8,0.1162,0.1711,0.2282,0.1282,0.2871,0.06917000000000001″}</code></pre> 
+       </div> 
+       <h2>Test with Postman</h2> 
+       <p>Now that we have the Lambda function, REST API, and test data, let’s test it using Postman, which is an HTTP client for testing web services. Make sure to <a href="https://www.postman.com/downloads/" target="_blank" rel="noopener noreferrer">download the latest version</a>.</p> 
+       <p>When you deployed your API, it provided the invoke URL, which looks like</p> 
+       <p><code>https://{restapi_id}.execute-api.us-west-2.amazonaws.com/prod/predictbreastcancer</code>.</p> 
+       <p>It follows the format</p> 
+       <p><code>https://<em><span style="color: #ff0000">{restapi_id}</span></em>.execute-api.<em><span style="color: #ff0000">{region}</span></em>.amazonaws.com/<em><span style="color: #ff0000">{stage_name}</span></em>/<em><span style="color: #ff0000">{resource_name}</span></em></code>.</p> 
+       <p>For more information about invoking an API in API Gateway, see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-call-api.html" target="_blank" rel="noopener noreferrer">Invoking a REST API in Amazon API Gateway</a>.</p> 
+       <ol> 
+        <li>Enter the invoke URL into Postman.</li> 
+        <li>Choose <strong>POST</strong> as method.</li> 
+        <li>On the <strong>Body</strong> tab, enter the test data.</li> 
+        <li>Choose <strong>Send</strong> to see the returned result as B for the row of test data we looked at earlier.</li> 
+       </ol> 
+       <p><img style="margin: 10px 0px 10px 0px;border: 1px solid #CCCCCC" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2021/03/31/13-Builder-Team-Library.jpg" alt="" width="800" height="619" /></p> 
+       <h2>Conclusion</h2> 
+       <p>In this post, you created a model endpoint deployed and hosted by SageMaker. Then you created serverless components (a REST API and Lambda function) that invoke the endpoint. Now you know how to call an ML model endpoint hosted by SageMaker using serverless technology.</p> 
+       <p>If you have feedback about this post, please leave it in the comments. If you have questions about implementing the example used in this post, you can also open a thread on the <a href="https://forums.aws.amazon.com/category.jspa?categoryID=21" target="_blank" rel="noopener noreferrer">Developer Tools forum</a>.</p> 
+       <hr /> 
+       <h3>About the Author</h3> 
+       <p><img class="size-full wp-image-5533 alignleft" src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2018/07/19/rumi-olsen-100.jpg" alt="" width="100" height="134" /><strong>Rumi Olsen</strong> is a Solutions Architect in the AWS Partner Program.&nbsp;She specializes in serverless and machine learning solutions in her current role, and has a background in natural language processing technologies. She spends most of her spare time with her daughter exploring the nature of Pacific Northwest.</p> 
+      </section> 
+      <footer> 
+       <div class="blog-tag-list">
+         TAGS: 
+        <span property="keywords"><a href="https://aws.amazon.com/blogs/machine-learning/tag/amazon-sagemaker/" rel="tag">Amazon SageMaker</a></span> 
+       </div> 
+      </footer> 
+      <div class="lb-row lb-collapse aws-comment-wrapper"> 
+       <div class="lb-col lb-tiny-24 lb-push-0 lb-small-10 lb-small-push-7 lb-mid-10 lb-mid-push-7 lb-large-8 lb-large-push-8"> 
+        <a id="aws-comment-trigger-5500" href="https://commenting.awsblogs.com/embed.html?disqus_shortname=amazon-ai-blog&amp;disqus_identifier=5500&amp;disqus_title=Call+an+Amazon+SageMaker+model+endpoint+using+Amazon+API+Gateway+and+AWS+Lambda&amp;disqus_url=https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/" data-lb-comp="aws-blog:commenting" class="blog-btn-a blog-btn-a-large blog-btn-a-block" data-sandbox-attr="allow-forms allow-scripts allow-popups allow-same-origin"> <i class="icon-comment"></i> View Comments </a> 
+       </div> 
+      </div> 
+      <div class="js-mbox" data-mbox="en_blog_post_comments"></div> 
+     </article> 
+    </main> 
+    <div class="blog-sidebar lb-col lb-tiny-24 lb-mid-8"> 
+     <div class="awsm"> 
+      <div class="lb-box" style="padding-left:30px;"> 
+       <h3 id="Resources" class="lb-txt-none lb-h3 lb-title" style="margin-top:30px;"> Resources</h3> 
+       <div class="data-attr-wrapper lb-none-pad lb-none-v-margin lb-box" data-da-type="ha" data-da-channel="ha" data-da-language="en" data-da-placement="blog-sb-resources" data-da-campaign="acq_awsblogsb" data-da-content="machine-learning-resources" data-da-trk="blog_initial"> 
+        <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/getting-started?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=machine-learning-resources"> Getting Started</a> 
+        <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/new?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=machine-learning-resources"> What's New</a> 
+        <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/blogs?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=machine-learning-resources"> Top Posts</a> 
+        <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/podcasts/aws-podcast?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=machine-learning-resources"> Official AWS Podcast</a> 
+        <a class="lb-txt-none lb-txt" href="https://aws.amazon.com/solutions/case-studies?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=machine-learning-resources"> AWS Case Studies</a> 
+        <div class="lb-grid lb-row lb-row-max-large lb-snap"> 
+         <div class="lb-col lb-tiny-24 lb-mid-8"> 
+          <hr class="lb-divider" /> 
+         </div> 
+         <div class="lb-col lb-tiny-24 lb-mid-8"> 
+         </div> 
+         <div class="lb-col lb-tiny-24 lb-mid-8"> 
+         </div> 
+        </div> 
+       </div> 
+       <h3 id="Follow" class="lb-txt-none lb-h3 lb-title"> Follow</h3> 
+       <div class="data-attr-wrapper lb-none-pad lb-none-v-margin lb-box" data-da-type="ha" data-da-channel="ha" data-da-language="en" data-da-placement="blog-sb-social" data-da-campaign="acq_awsblogsb" data-da-content="machine-learning-social" data-da-trk="blog_initial"> 
+        <a class="lb-txt-none lb-txt" href="https://twitter.com/awscloud"> <i class="icon-twitter-square"></i>&nbsp;Twitter</a> 
+        <a class="lb-txt-none lb-txt" href="https://www.facebook.com/amazonwebservices"> <i class="icon-facebook-square"></i>&nbsp;Facebook</a> 
+        <a class="lb-txt-none lb-txt" href="https://www.linkedin.com/company/amazon-web-services/"> <i class="icon-linkedin-square"></i>&nbsp;LinkedIn</a> 
+        <a class="lb-txt-none lb-txt" href="https://www.twitch.tv/aws"> <i class="icon-twitch"></i>&nbsp;Twitch</a> 
+        <a class="lb-txt-none lb-txt" href="http://feeds.feedburner.com/AmazonWebServicesBlog"> <i class="icon-rss-square"></i>&nbsp;RSS Feed</a> 
+        <a class="lb-txt-none lb-txt" href="https://pages.awscloud.com/communication-preferences?sc_ichannel=ha&amp;sc_icampaign=acq_awsblogsb&amp;sc_icontent=maching-learning-social"> <i class="icon-envelope-square"></i>&nbsp;Email Updates</a> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="js-mbox" data-mbox="en_blog_post_sidebar"></div> 
+    </div> 
+   </div> 
+  </div> 
+  <div class="aws-blog-next-related-article-arrow"> 
+   <div class="aws-directories-container"></div> 
+   <script type="text/x-handlebars-template">
+    <div class="lb-article-arrow" data-next-related-item>
+      <a class="lb-widget-body" href="{{track_url items.0.additionalFields.link 'b_nrp'}}">
+        <div class="lb-content-area" >
+                    <span class="lb-article-title">{{{items.0.additionalFields.title}}}</span>
+        </div>
+        <i class="icon-chevron-right"></i>
+      </a>
+    </div>
+  </script> 
+  </div> 
+  <div class="awsm"> 
+   <footer id="aws-page-footer" class="m-page-footer" role="contentinfo"> 
+    <div data-url="https://dc.ads.linkedin.com/collect/?pid=3038&amp;fmt=gif" data-lb-comp="tracking-pixel"></div> 
+    <div data-lb-comp="google-rlsa-pixel"></div> 
+    <div class="data-attr-wrapper lb-none-v-margin lb-xb-grid-wrap" style="background-color:#242F3E;" data-da-type="so" data-da-so-type="viewport" data-da-so-language="en" data-da-so-category="monitoring" data-da-so-name="footer" data-da-so-version="a"> 
+     <div class="lb-xb-grid lb-row-max-large lb-snap lb-tiny-xb-1 lb-small-xb-3 lb-large-xb-5"> 
+      <div class="lb-xbcol"> 
+       <div class="data-attr-wrapper lb-small-hide lb-btn" data-da-type="so" data-da-so-type="viewport" data-da-so-language="en" data-da-so-category="monitoring" data-da-so-name="footer_buttons" data-da-so-url="all" data-da-so-version="footer_signin-mobile-default"> 
+        <a class="lb-btn-p-primary" href="https://console.aws.amazon.com/console/home?nc1=f_ct&amp;src=footer-signin-mobile" role="button"> <span> Sign In to the Console</span> </a> 
+       </div> 
+       <h3 id="Learn_About_AWS" class="lb-txt-none lb-txt-p-chromium lb-tiny-v-margin lb-h3 lb-title"> Learn About AWS</h3> 
+       <ul class="lb-txt-p-chromium lb-ul lb-list-style-none lb-li-micro-v-margin lb-tiny-ul-block" style="margin-bottom:0px;"> 
+        <li><a href="https://aws.amazon.com/what-is-aws/?nc1=f_cc" target="_blank" rel="noopener">What Is AWS?</a></li> 
+        <li><a href="https://aws.amazon.com/what-is-cloud-computing/?nc1=f_cc" target="_blank" rel="noopener">What Is Cloud Computing?</a></li> 
+        <li><a href="https://aws.amazon.com/diversity-inclusion/?nc1=f_cc" target="_blank" rel="noopener">AWS Inclusion, Diversity &amp; Equity</a></li> 
+        <li><a href="https://aws.amazon.com/devops/what-is-devops/?nc1=f_cc" target="_blank" rel="noopener">What Is DevOps?</a></li> 
+        <li><a href="https://aws.amazon.com/containers/?nc1=f_cc" target="_blank" rel="noopener">What Is a Container?</a></li> 
+        <li><a href="https://aws.amazon.com/big-data/datalakes-and-analytics/what-is-a-data-lake/?nc1=f_cc" target="_blank" rel="noopener">What Is a Data Lake?</a></li> 
+        <li><a href="https://aws.amazon.com/security/?nc1=f_cc" target="_blank" rel="noopener">AWS Cloud Security</a></li> 
+        <li><a href="https://aws.amazon.com/new/?nc1=f_cc" target="_blank" rel="noopener">What's New</a></li> 
+        <li><a href="https://aws.amazon.com/blogs/?nc1=f_cc" target="_blank" rel="noopener">Blogs</a></li> 
+        <li><a href="https://press.aboutamazon.com/press-releases/aws" target="_blank" rel="noopener" title="Press Releases">Press Releases</a></li> 
+       </ul> 
+      </div> 
+      <div class="lb-xbcol"> 
+       <h3 id="Resources_for_AWS" class="lb-txt-none lb-txt-p-chromium lb-tiny-v-margin lb-h3 lb-title"> Resources for AWS</h3> 
+       <ul class="lb-txt-p-chromium lb-ul lb-list-style-none lb-li-micro-v-margin lb-tiny-ul-block" style="margin-bottom:0px;"> 
+        <li><a href="https://aws.amazon.com/getting-started/?nc1=f_cc" target="_blank" rel="noopener">Getting Started</a></li> 
+        <li><a href="https://aws.amazon.com/training/?nc1=f_cc" target="_blank" rel="noopener">Training and Certification</a></li> 
+        <li><a href="https://aws.amazon.com/solutions/?nc1=f_cc" target="_blank" rel="noopener">AWS Solutions Portfolio</a></li> 
+        <li><a href="https://aws.amazon.com/architecture/?nc1=f_cc" target="_blank" rel="noopener">Architecture Center</a></li> 
+        <li><a href="https://aws.amazon.com/faqs/?nc1=f_dr" target="_blank" rel="noopener">Product and Technical FAQs</a></li> 
+        <li><a href="https://aws.amazon.com/resources/analyst-reports/?nc1=f_cc" target="_blank" rel="noopener">Analyst Reports</a></li> 
+        <li><a href="https://aws.amazon.com/partners/?nc1=f_dr" target="_blank" rel="noopener">AWS Partner Network</a></li> 
+       </ul> 
+      </div> 
+      <div class="lb-xbcol"> 
+       <h3 id="Developers_on_AWS" class="lb-txt-none lb-txt-p-chromium lb-tiny-v-margin lb-h3 lb-title"> Developers on AWS</h3> 
+       <ul class="lb-txt-p-chromium lb-ul lb-list-style-none lb-li-micro-v-margin lb-tiny-ul-block" style="margin-bottom:0px;"> 
+        <li><a href="https://aws.amazon.com/developer/?nc1=f_dr" target="_blank" rel="noopener">Developer Center</a></li> 
+        <li><a href="https://aws.amazon.com/developer/tools/?nc1=f_dr" target="_blank" rel="noopener">SDKs &amp; Tools</a></li> 
+        <li><a href="https://aws.amazon.com/developer/language/net/?nc1=f_dr" target="_blank" rel="noopener">.NET on AWS</a></li> 
+        <li><a href="https://aws.amazon.com/developer/language/python/?nc1=f_dr" target="_blank" rel="noopener">Python on AWS</a></li> 
+        <li><a href="https://aws.amazon.com/developer/language/java/?nc1=f_dr" target="_blank" rel="noopener">Java on AWS</a></li> 
+        <li><a href="https://aws.amazon.com/developer/language/php/?nc1=f_cc" target="_blank" rel="noopener">PHP on AWS</a></li> 
+        <li><a href="https://aws.amazon.com/developer/language/javascript/?nc1=f_dr" target="_blank" rel="noopener">Javascript on AWS</a></li> 
+       </ul> 
+      </div> 
+      <div class="lb-xbcol"> 
+       <h3 id="Help" class="lb-txt-none lb-txt-p-chromium lb-tiny-v-margin lb-h3 lb-title"> Help</h3> 
+       <ul class="lb-txt-p-chromium lb-ul lb-list-style-none lb-li-micro-v-margin lb-tiny-ul-block" style="margin-bottom:0px;"> 
+        <li><a href="https://aws.amazon.com/contact-us/?nc1=f_m" target="_blank" rel="noopener">Contact Us</a></li> 
+        <li><a href="https://www.amazon.jobs/aws" target="_blank" rel="noopener">AWS Careers</a></li> 
+        <li><a href="https://console.aws.amazon.com/support/home/?nc1=f_dr" target="_blank" rel="noopener">File a Support Ticket</a></li> 
+        <li><a href="https://aws.amazon.com/premiumsupport/knowledge-center/?nc1=f_dr" target="_blank" rel="noopener">Knowledge Center</a></li> 
+        <li><a href="https://aws.amazon.com/premiumsupport/?nc1=f_dr" target="_blank" rel="noopener">AWS Support Overview</a></li> 
+        <li><a href="https://aws.amazon.com/legal/?nc1=f_cc" target="_blank" rel="noopener">Legal</a></li> 
+       </ul> 
+       <div class="lb-mbox js-mbox" data-lb-comp="mbox" data-lb-comp-ignore="true" data-mbox="en_footer-v3_addl-help"> 
+       </div> 
+      </div> 
+      <div class="lb-xbcol"> 
+       <div class="lb-mbox js-mbox" data-lb-comp="mbox" data-lb-comp-ignore="true" data-mbox="en_footer-v3_cta"> 
+        <div class="data-attr-wrapper lb-tiny-hide lb-small-show lb-btn" data-da-type="so" data-da-so-type="viewport" data-da-so-language="en" data-da-so-category="monitoring" data-da-so-name="footer_buttons" data-da-so-url="all" data-da-so-version="footer_signup-default"> 
+         <a class="lb-btn-p-primary" href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?nc1=f_ct&amp;src=default" role="button"> <span> Create an AWS Account</span> </a> 
+        </div> 
+       </div> 
+       <div class="lb-xb-grid-wrap" style="padding-left:0px; margin-top:20px;"> 
+        <div class="lb-xb-grid lb-row-max-large lb-xb-equal-height lb-snap lb-gutter-collapse lb-vgutter-collapse lb-tiny-xb-auto"> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-txt" style="padding-left:0px; padding-right:5px;" href="https://twitter.com/awscloud" target="_blank" rel="noopener" title="Twitter"> <i class="icon-twitter"></i></a> 
+         </div> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-none-v-margin lb-txt" style="padding-right:5px;" href="https://www.facebook.com/amazonwebservices" target="_blank" rel="noopener" title="Facebook"> <i class="icon-facebook"></i></a> 
+         </div> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-txt" style="padding-right:5px;" href="https://www.twitch.tv/aws" target="_blank" rel="noopener" title="Twitch"> <i class="icon-twitch"></i></a> 
+         </div> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-txt" style="padding-right:5px;" href="https://www.youtube.com/user/AmazonWebServices/Cloud/" target="_blank" rel="noopener" title="YouTube"> <i class="icon-youtube"></i></a> 
+         </div> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-txt" style="padding-right:5px;" href="https://aws.amazon.com/podcasts/aws-podcast/" target="_blank" rel="noopener" title="Podcast"> <i class="icon-podcast"></i></a> 
+         </div> 
+         <div class="lb-xbcol"> 
+          <a class="lb-txt-none lb-txt-p-chromium lb-none-pad lb-txt" style="padding-right:5px;" href="https://pages.awscloud.com/communication-preferences?trk=homepage" target="_blank" rel="noopener" title="Email"> <i class="icon-envelope-o"></i></a> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="lb-txt-normal lb-txt-white lb-txt-14 lb-rtxt" style="color:#eaeded; margin-top:0px;"> 
+        <div>
+          Amazon is an Equal Opportunity Employer: 
+         <i> Minority / Women / Disability / Veteran / Gender Identity / Sexual Orientation / Age.</i> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+    <div class="lb-none-pad lb-none-v-margin lb-xb-grid-wrap" style="background-color:#242F3E;"> 
+     <div class="lb-xb-grid lb-row-max-large lb-snap lb-tiny-xb-1"> 
+      <div class="lb-xbcol"> 
+       <ul class="lb-txt-p-chromium lb-tiny-iblock lb-none-v-margin lb-ul lb-list-style-none lb-li-micro-v-margin lb-tiny-ul-iblock"> 
+        <li class="lb-txt-bold">Language</li> 
+        <li data-language="ar"><a href="https://aws.amazon.com/ar/?nc1=h_ls">عربي</a></li> 
+        <li data-language="id"><a href="https://aws.amazon.com/id/?nc1=h_ls">Bahasa Indonesia</a></li> 
+        <li data-language="de"><a href="https://aws.amazon.com/de/?nc1=h_ls">Deutsch</a></li> 
+        <li data-language="en"><a href="https://aws.amazon.com/?nc1=h_ls">English</a></li> 
+        <li data-language="es"><a href="https://aws.amazon.com/es/?nc1=h_ls">Espa&ntilde;ol</a></li> 
+        <li data-language="fr"><a href="https://aws.amazon.com/fr/?nc1=h_ls">Fran&ccedil;ais</a></li> 
+        <li data-language="it"><a href="https://aws.amazon.com/it/?nc1=h_ls">Italiano</a></li> 
+        <li data-language="pt"><a href="https://aws.amazon.com/pt/?nc1=h_ls">Portugu&ecirc;s</a></li> 
+        <li data-language="vi"><a href="https://aws.amazon.com/vi/?nc1=f_ls">Tiếng Việt</a></li> 
+        <li data-language="tr"><a href="https://aws.amazon.com/tr/?nc1=h_ls">T&uuml;rk&ccedil;e</a></li> 
+        <li data-language="ru"><a href="https://aws.amazon.com/ru/?nc1=h_ls">Ρусский</a></li> 
+        <li data-language="th"><a href="https://aws.amazon.com/th/?nc1=f_ls">ไทย</a></li> 
+        <li data-language="jp"><a href="https://aws.amazon.com/jp/?nc1=h_ls">日本語</a></li> 
+        <li data-language="ko"><a href="https://aws.amazon.com/ko/?nc1=h_ls">한국어</a></li> 
+        <li data-language="cn"><a href="https://aws.amazon.com/cn/?nc1=h_ls">中文 (简体)</a></li> 
+        <li data-language="tw"><a href="https://aws.amazon.com/tw/?nc1=h_ls">中文 (繁體)</a></li> 
+       </ul> 
+      </div> 
+     </div> 
+    </div> 
+    <div class="lb-none-pad lb-none-v-margin lb-xb-grid-wrap" style="background-color:#EAEDED; padding-top:5px;"> 
+     <div class="lb-xb-grid lb-row-max-large lb-snap lb-tiny-xb-1"> 
+      <div class="lb-xbcol"> 
+       <ul class="lb-txt-p-squid-ink lb-none-v-margin lb-ul lb-list-style-none lb-li-none-v-margin lb-tiny-ul-iblock"> 
+        <li><a href="https://aws.amazon.com/privacy/?nc1=f_pr">Privacy</a></li> 
+        <li>|</li> 
+        <li><a href="https://aws.amazon.com/terms/?nc1=f_pr">Site Terms</a></li> 
+        <li>|</li> 
+        <li data-cookie-consent-modal="1"><a href="#"> Cookie Preferences </a></li> 
+        <li>|</li> 
+        <li>&copy; 2021, Amazon Web Services, Inc. or its affiliates. All rights reserved.</li> 
+       </ul> 
+      </div> 
+     </div> 
+    </div> 
+   </footer> 
+  </div> 
+  <script data-disqus-cookies-disabled-dialog="" type="text/html">
+  <div class="lb-alert lb-alert-info">
+    <h4 class="lb-title">Feature not available</h4>
+
+    <p>Visit <a href="#" data-shortbread-modal="true">cookie preferences</a> and allow all cookies to enable this feature.</p>
+  </div>
+</script> 
+  <div id="aws-page-end"></div> 
+  <div id="lb-page-end"></div> 
+  <script src="//a0.awsstatic.com/da/js/1.0.47/aws-da.js" async=""></script> 
+  <script src="//a0.awsstatic.com/aws-blog/1.0.46/js/vendor/prism.js" data-default-language="markup"></script>  
+ </body>
+</html>
