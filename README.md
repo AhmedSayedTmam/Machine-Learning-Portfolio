@@ -7,14 +7,13 @@ This Repository contains portfolio of Machine Learning projects for academic, se
 
 - ### Data Analysis and Visualization:
 	- [Wrangle and Analyze The WeRateDogs Twitter archive](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Data%20Analysis%20and%20Visualisation/0.Wrangle%20and%20Analyze%20The%20WeRateDogs%20Twitter%20archive): The dataset that is wrangled is the tweet archive of Twitter user @dog_rates, also known as WeRateDogs, starting with Gathering data then Assessing data and Cleaning data.
-	
 	- [Investigate a Dataset (TMDb Movie)](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Data%20Analysis%20and%20Visualisation/1.Investigate%20a%20Dataset%20(TMDb%20Movie)): Investigate and explore this data set by proposing the answers of some questions.
 	- [Analyze A/B Test Results](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Data%20Analysis%20and%20Visualisation/2.Analyze_ab_test_results/Analyze_ab_test_results): The goal is to work through this notebook to help the company understand if they should implement the new page, keep the old page, or perhaps run the experiment longer to make their decision using an A/B test.
 	- [Loan Data from Prosper Exploration](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Data%20Analysis%20and%20Visualisation/3.Loan%20Data%20from%20Prosper%20Exploration/Loan%20Data%20from%20Prosper%20Exploration): Exploratory Data Analysis of  data set that contains 113,937 loans with 81 variables on each loan, including loan amount, borrower rate (or interest rate), current loan status, borrower income, and many others.
-    
-	
-  _Tools: Pandas, Numpy, Seaborn and Matplotlib_
-
+	- [Netflix Movies and TV Shows Analysis](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Data%20Analysis%20and%20Visualisation/4.Netflix%20Movies%20and%20TV%20Shows%20Analysis): Data Analysis and visualization of  Netflix data set that  consists of listings of all the movies and tv shows available on Netflix, along with details such as - cast, directors, ratings, release year, duration, etc.
+  
+	_Tools: Pandas, Numpy, Seaborn and Matplotlib_
+  
 - ### Simple Machine Learning NoteBooks: 
 	- [ML with Regression](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Simple%20Machine%20Learning%20NoteBooks/2.Regression): Simple Linear Regression, Multiple Linear Regression, Polynomial Regression, SVR, Decision Tree Regression, Random Forest Regression.
 	
@@ -87,6 +86,7 @@ This Repository contains portfolio of Machine Learning projects for academic, se
 	-  [Use Case 1 : Default of credit card clients](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Use%20Cases/Use%20Case%201%20%20Default%20of%20credit%20card%20clients): Build, train to predict the target label Y Did the person pay default payment next month (Yes=1 or No=0 ). 
 	- [Use Case 2 : Amazon Product Reviews](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Use%20Cases/Use%20Case%202%20Amazon%20Product%20Reviews): Classify reviews as positive or negative for dataset about amazon product reviews, so we will make NLP then build, train and evaluate ML model to predict customers reviews as positive or negative. 
 	- [Use Case 3 : Object-Detection](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Use%20Cases/Use%20Case%203%20Object-Detection): Using a dataset from the inaturalist.org This dataset contains 500 images of bees that have been uploaded by inaturalist users for the purposes of recording the observation and identification.
+	- [Use Case 3 : Movies Recommendation System](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/tree/main/Use%20Cases/Use%20Case%204%20Movies%20Recommendation%20System): Implementing a recommendation algorithms using cosine similarity to build a model to come up with our final recommendation system.
 	
 	_Tools: SageMaker session, IAM role, S3 bucket, Pandas, Numpy, scikit-learn , Seaborn and Matplotlib_
 
