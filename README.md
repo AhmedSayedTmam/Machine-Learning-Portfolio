@@ -74,6 +74,12 @@ This Repository contains portfolio of Machine Learning projects for academic, se
   -  [DeepAR-Electricity](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/blob/main/Probabilistic%20Forecasting%20with%20DeepAR%20and%20AWS%20SageMaker/DeepAR-Electricity.ipynb): using DeepAR on SageMaker for predicting energy consumption of customers over time, based on a collected dataset. 
 
   _Tools: SageMaker session, IAM role, S3 bucket, Pandas, Numpy, scikit-learn , Seaborn and Matplotlib_
+  
+  ### Machine Learning with Spark: 
+  
+  -  [Churn_Prediction_with_PySpark](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/blob/main/Machine%20Learning%20with%20Spark/Churn_Prediction_with_PySpark/Churn_Prediction_with_PySpark.ipynb): In this project, we managed to build an end-to-end scalable machine learning pipeline using Python API for Spark, PySpark, to identify churned users.The pipeline runs from cleaning and labeling data, through feature engineering and removing highly correlated featues, to model tuning using grid search with cross validation, to predicting the probabilities associated with users prone to churn.
+  
+  _Tools: Pandas, Numpy, scikit-learn , Seaborn, Matplotlib, and pyspark_
 
 
 - ### Amazon SageMaker Neo: 
