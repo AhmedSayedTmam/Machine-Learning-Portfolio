@@ -2,6 +2,8 @@
 
 This Repository contains portfolio of Machine Learning projects for academic, self learning and work purposes, presented in the form of iPython Notebooks.
 
+![logo](./img/AWS ML.png)
+
 
 ## Contents
 
