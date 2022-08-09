@@ -4,7 +4,7 @@ This Repository contains portfolio of Machine Learning projects for academic, se
 
 
 
-![logo](./img/ML_IMG.png)
+<img src="./img/ML_IMG.png" alt="logo" style="zoom:80%;" />
 
 
 ## Contents
@@ -82,6 +82,7 @@ This Repository contains portfolio of Machine Learning projects for academic, se
   ### Machine Learning with Spark: 
   
   -  [Churn_Prediction_with_PySpark](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/blob/main/Machine%20Learning%20with%20Spark/Churn_Prediction_with_PySpark/Churn_Prediction_with_PySpark.ipynb): In this project, we managed to build an end-to-end scalable machine learning pipeline using Python API for Spark, PySpark, to identify churned users.The pipeline runs from cleaning and labeling data, through feature engineering and removing highly correlated featues, to model tuning using grid search with cross validation, to predicting the probabilities associated with users prone to churn.
+  -  [Home_Credit_Default_Risk_Binary_Classification](https://github.com/AhmedSayedTmam/Machine-Learning-Portfolio/blob/main/Machine%20Learning%20with%20Spark/Home_Credit_Default_Risk_Binary_Classification/Home_Credit_Default_Risk_Binary_Classification.ipynb): In this project, we used a real world dataset from Home Credit Default Risk competition on kaggle. The target variable is either 0 (applicants who were able to pay back their loans)or 1 (applicants who were NOT able to pay back their loans). it is a binary classification problem with a highly imbalanced target label.
   
   _Tools: Pandas, Numpy, scikit-learn , Seaborn, Matplotlib, and pyspark_
 
