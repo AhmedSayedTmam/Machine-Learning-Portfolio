@@ -4,7 +4,7 @@ This Repository contains portfolio of Machine Learning projects for academic, se
 
 
 
-​                                          ![logo](./img/AWS%20ML.png)
+![logo](./img/ML_IMG.png)
 
 
 ## Contents
