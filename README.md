@@ -4,7 +4,7 @@ This Repository contains portfolio of Machine Learning projects for academic, se
 
 
 
-![logo](./img/ML_IMG.jpeg)
+![logo](./img/ML_IMG.png)
 
 
 ## Contents
